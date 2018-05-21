@@ -1,0 +1,38 @@
+<html>
+<head>
+    <title>Open Street Map</title>
+    <link rel="stylesheet" href="/public/vendor/leaflet/leaflet.css">
+    <style>
+        #map {
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="/public/vendor/leaflet/leaflet.js"></script>
+<script>
+  var mymap = L.map('map').setView([-7.475198, 110.217161], 13)
+  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+  }).addTo(mymap);
+
+  // passing data dari controller ke script view
+  const geojson = <%- JSON.stringify(geojson) %>;
+
+  geojson.forEach(function (item) {
+
+    // menukar latitude dan longitude
+    for(let i = 0; i < item.coordinates[0].length; i++) {
+      const temp = item.coordinates[0][i][0];
+      item.coordinates[0][i][0] = item.coordinates[0][i][1]
+      item.coordinates[0][i][1] = temp;
+    }
+
+    // menggambar peta
+    L.polyline(item.coordinates[0], {color: 'red'}).addTo(mymap);
+  })
+
+</script>
+</body>
+</html>
