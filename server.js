@@ -26,8 +26,14 @@ app.get('/', function (req, res) {
       return JSON.parse(row.st_asgeojson)
     })
 
-    console.log(geojson)
-    res.render('index', {geojson})
+    client.query('SELECT ST_AsGeoJSON(geom) FROM lines_jalan_jatim LIMIT 5', function (err, result) {
+      let geojson2 = result.rows;
+      geojson2 = geojson2.map(function (row) {
+        return JSON.parse(row.st_asgeojson)
+      })
+
+      res.render('index', {geojson, geojson2})
+    })
   })
 })
 

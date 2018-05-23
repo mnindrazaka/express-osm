@@ -33,6 +33,22 @@
     L.polyline(item.coordinates[0], {color: 'red'}).addTo(mymap);
   })
 
+  // passing data dari controller ke script view
+  const geojson2 = <%- JSON.stringify(geojson2) %>;
+
+  geojson2.forEach(function (item) {
+
+    // menukar latitude dan longitude
+    for(let i = 0; i < item.coordinates[0].length; i++) {
+      const temp = item.coordinates[0][i][0];
+      item.coordinates[0][i][0] = item.coordinates[0][i][1]
+      item.coordinates[0][i][1] = temp;
+    }
+
+    // menggambar peta
+    L.polyline(item.coordinates[0], {color: 'yellow'}).addTo(mymap);
+  })
+
 </script>
 </body>
 </html>
