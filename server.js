@@ -21,7 +21,7 @@ app.use("/public", express.static("public"))
 // routing
 app.get("/", function(req, res) {
 	client.query(
-		"SELECT st_asgeojson(lgeom), color FROM pnm_damaged_roads a INNER JOIN pnm_road_segments b ON(a.sid = b.sid) INNER JOIN damage_type c ON (a.type_id = c.type_id) LIMIT 5000",
+		"SELECT st_asgeojson(lgeom), e.color FROM pnm_damaged_roads a INNER JOIN pnm_road_segments b ON(a.sid = b.sid) INNER JOIN damage_type c ON (a.type_id = c.type_id) INNER JOIN damage_level d ON (a.level_id = d.level_id) INNER JOIN damage_color e ON (a.type_id = e.type_id AND a.level_id = e.level_id) LIMIT 5000",
 		function(err, result) {
 			let geojson = result.rows
 			geojson = geojson.map(function(row) {
