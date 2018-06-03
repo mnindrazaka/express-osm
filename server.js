@@ -21,14 +21,11 @@ app.use("/public", express.static("public"))
 // routing
 app.get("/", function(req, res) {
 	client.query(
-		"SELECT st_asgeojson(lgeom), color FROM pnm_damaged_roads a INNER JOIN pnm_road_segments b ON(a.sid = b.sid) INNER JOIN damage_type c ON (a.type_id = c.type_id) LIMIT 5000",
+		"SELECT st_asgeojson(st_geomfromtext('MULTILINESTRING((112.9645587 -7.9284821, 112.964513511591 -7.92847851996948),(112.9524586 -7.9299028, 112.952464832001 -7.92994769956634))'))",
 		function(err, result) {
 			let geojson = result.rows
 			geojson = geojson.map(function(row) {
-				return {
-					...JSON.parse(row.st_asgeojson),
-					color: row.color,
-				}
+				return JSON.parse(row.st_asgeojson)
 			})
 
 			console.log(geojson)

@@ -21,18 +21,20 @@
 
     // passing data dari controller ke script view
     const geojson = <%- JSON.stringify(geojson) %>;
+    console.log(geojson)
 
     geojson.forEach(function (item) {
+      item.coordinates.forEach(function(coordinate) {
+        // menukar latitude dan longitude
+        for (let i = 0; i < coordinate.length; i++) {
+          const temp = coordinate[i][0]
+          coordinate[i][0] = coordinate[i][1]
+          coordinate[i][1] = temp
+        }
 
-      // menukar latitude dan longitude
-      for (let i = 0; i < item.coordinates.length; i++) {
-        const temp = item.coordinates[i][0];
-        item.coordinates[i][0] = item.coordinates[i][1]
-        item.coordinates[i][1] = temp;
-      }
-
-      // menggambar peta
-      L.polyline(item.coordinates, { color: item.color }).addTo(mymap);
+        // menggambar peta
+        L.polyline(coordinate, { color: '#000' }).addTo(mymap);
+      })
     })
 
   </script>
