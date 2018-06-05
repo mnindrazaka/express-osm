@@ -11,6 +11,26 @@
 </head>
 
 <body>
+  <label>
+    Damage Type
+    <select id="damage_type" onchange="filter_damage()">
+      <option value="0">All</option>
+      <% damage_type.forEach(function(item) {  %>
+      <option value="<%= item.type_id %>"><%= item.name %></option>
+      <% }) %>  
+    </select>
+  </label>
+
+  <label>
+    Damage Level
+    <select id="damage_level" onchange="filter_damage()">
+      <option value="0">All</option>
+      <% damage_level.forEach(function(item) {  %>
+      <option value="<%= item.level_id %>"><%= item.name %></option>
+      <% }) %>  
+    </select>
+  </label>
+
   <div id="map"></div>
   <script src="/public/vendor/leaflet/leaflet.js"></script>
   <script>
@@ -18,27 +38,68 @@
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
     }).addTo(mymap);
-
+    
     // passing data dari controller ke script view
-    const geojson = <%- JSON.stringify(geojson) %>;
+    window.geojson = <%- JSON.stringify(geojson) %>;
 
-    geojson.forEach(function (item) {
+    // merubah coordinate ke lat lng
+    function convert_coordinate() {
+      for (let i = 0; i < window.geojson.length; i++) {
+        for (let j = 0; j < window.geojson[i].coordinates.length; j++) {
+          window.geojson[i].coordinates[j] = L.GeoJSON.coordsToLatLng(window.geojson[i].coordinates[j])
+        }
+      }
+    }
 
-      // menukar latitude dan longitude
-      for (let i = 0; i < item.coordinates.length; i++) {
-        const temp = item.coordinates[i][0];
-        item.coordinates[i][0] = item.coordinates[i][1]
-        item.coordinates[i][1] = temp;
+    // membersihkan peta dari polyline
+    function clear_map() {
+      for (i in mymap._layers) {
+        if (mymap._layers[i]._path != undefined) {
+          try {
+              mymap.removeLayer(mymap._layers[i]);
+          } catch (e) {
+              console.log("problem with " + e + mymap._layers[i]);
+          }
+        }
+      }
+    }
+
+    // menggambar polyline
+    function renderMap(geojson) {
+      clear_map()
+      geojson.forEach(function (item) {
+        // menggambar peta
+        L.polyline(item.coordinates, { color: item.color, opacity: 0.6, weight: 5}).bindPopup(`
+          <h4>damage type : ${item.damage_type}</h4>
+          <h4>damage level : ${item.damage_level}</h4>
+          <p>${item.information}</p>
+        `).addTo(mymap);
+      })
+    }
+
+    // filter polyline berdasarkan damage
+    function filter_damage() {
+      let type_id = document.getElementById("damage_type").value
+      let level_id = document.getElementById("damage_level").value
+      let geojson = window.geojson
+      
+      if (type_id != 0) {
+        geojson = geojson.filter(function(item) {
+          return item.damage_type_id == type_id
+        })
       }
 
-      // menggambar peta
-      L.polyline(item.coordinates, { color: item.color, opacity: 0.6, weight: 5}).bindPopup(`
-        <h4>damage type : ${item.damage_type}</h4>
-        <h4>damage level : ${item.damage_level}</h4>
-        <p>${item.information}</p>
-      `).addTo(mymap);
-    })
+      if (level_id != 0) {
+        geojson = geojson.filter(function(item) {
+          return item.damage_level_id == level_id
+        })
+      }
 
+      renderMap(geojson)
+    }
+
+    convert_coordinate()
+    renderMap(window.geojson)
   </script>
 </body>
 
