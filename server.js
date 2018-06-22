@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const cors = require("cors")
 const { Client } = require("pg")
 
 const client = new Client({
@@ -23,6 +24,9 @@ app.set("view engine", "ejs")
 
 // serve static files
 app.use("/public", express.static("public"))
+
+// enable CORS
+app.use(cors())
 
 // routing
 const webRoute = require("./routes/web/index")
