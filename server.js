@@ -18,6 +18,10 @@ app.use(function(req, res, next) {
 	next()
 })
 
+// body parser
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
 // setting view engine
 app.set("views", "views")
 app.set("view engine", "ejs")

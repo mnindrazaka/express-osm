@@ -1,11 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const controller = require("../../controller/api/damage_level")
 
-router.get("/", async function(req, res) {
-	const client = req.client
-	let damage_level = await client.query("SELECT * from damage_level")
-	damage_level = damage_level.rows
-	res.send(damage_level)
-})
-
+router.get("/", controller.index)
 module.exports = router
