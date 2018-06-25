@@ -1,8 +1,9 @@
 const damaged_road = {
+	// load all damaged road
 	index: async function(req, res) {
 		const client = req.client
 		let geojson = await client.query(
-			"SELECT st_asgeojson(lgeom), e.color, d.name as damage_level, d.level_id as damage_level_id, c.name as damage_type, c.type_id as damage_type_id, a.information FROM pnm_damaged_roads a INNER JOIN damage_type c ON (a.type_id = c.type_id) INNER JOIN damage_level d ON (a.level_id = d.level_id) INNER JOIN damage_color e ON (a.type_id = e.type_id AND a.level_id = e.level_id) LIMIT 100"
+			"SELECT st_asgeojson(lgeom), sid, osm_id, e.color, d.name as damage_level, d.level_id as damage_level_id, c.name as damage_type, c.type_id as damage_type_id, a.information FROM pnm_damaged_roads a INNER JOIN damage_type c ON (a.type_id = c.type_id) INNER JOIN damage_level d ON (a.level_id = d.level_id) INNER JOIN damage_color e ON (a.type_id = e.type_id AND a.level_id = e.level_id) LIMIT 100"
 		)
 		geojson = geojson.rows
 		geojson = geojson.map(function(row) {
@@ -16,22 +17,21 @@ const damaged_road = {
 
 			return {
 				coordinates,
-				color: row.color,
-				damage_level: row.damage_level,
-				damage_type: row.damage_type,
-				information: row.information,
-				damage_type_id: row.damage_type_id,
-				damage_level_id: row.damage_level_id
+				...row
 			}
 		})
 		res.send(geojson)
 	},
 
+	// update damaged road
 	update: async function(req, res) {
-		const { client, body, id } = req
-		const { type_id, level_id, information } = body
+		const { client, body } = req
+		const { osm_id, sid } = req.params
+		const { damage_type_id, damage_level_id, information } = body
+
+		console.log("kamu kirim ini ?", body)
 		await client.query(
-			`UPDATE damaged_roads SET type_id = ${type_id}, level_id = ${level_id}, information = '${information}' WHERE sid = ${id}`
+			`UPDATE pnm_damaged_roads SET type_id = ${damage_type_id}, level_id = ${damage_level_id}, information = '${information}' WHERE osm_id = ${osm_id} AND sid = ${sid}`
 		)
 		res.send({ success: true })
 	}

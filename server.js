@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
 const cors = require("cors")
+const bodyParser = require("body-parser")
 const { Client } = require("pg")
 
 const client = new Client({
@@ -19,8 +20,8 @@ app.use(function(req, res, next) {
 })
 
 // body parser
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // setting view engine
 app.set("views", "views")
