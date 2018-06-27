@@ -26,13 +26,16 @@ const damaged_road = {
 	// update damaged road
 	update: async function(req, res) {
 		const { client, body } = req
-		const { osm_id, sid } = req.params
-		const { damage_type_id, damage_level_id, information } = body
-
+		const { damage_type_id, damage_level_id, information } = body.value
 		console.log("kamu kirim ini ?", body)
-		await client.query(
-			`UPDATE pnm_damaged_roads SET type_id = ${damage_type_id}, level_id = ${damage_level_id}, information = '${information}' WHERE osm_id = ${osm_id} AND sid = ${sid}`
-		)
+
+		body.segments.forEach(item => {
+			const { osm_id, sid } = item
+			client.query(
+				`UPDATE pnm_damaged_roads SET type_id = ${damage_type_id}, level_id = ${damage_level_id}, information = '${information}' WHERE osm_id = ${osm_id} AND sid = ${sid}`
+			)
+		})
+
 		res.send({ success: true })
 	}
 }
