@@ -3,5 +3,5 @@ const router = express.Router()
 const controller = require("../../controller/api/damaged_road")
 
 router.get("/", controller.index)
-router.put("/", controller.update)
+router.post("/", controller.create)
 module.exports = router

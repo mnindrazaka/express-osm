@@ -2,22 +2,6 @@ const express = require("express")
 const app = express()
 const cors = require("cors")
 const bodyParser = require("body-parser")
-const { Client } = require("pg")
-
-const client = new Client({
-	user: "postgres",
-	host: "localhost",
-	database: "OSM",
-	password: "postgres",
-	port: 5433
-})
-client.connect()
-
-// share client database
-app.use(function(req, res, next) {
-	req.client = client
-	next()
-})
 
 // body parser
 app.use(bodyParser.json())

@@ -9,25 +9,59 @@ const damaged_road = sequelize.define(
 	{
 		rid: {
 			type: Sequelize.INTEGER,
-			primaryKey: true
-		},
-		lgeom: {
-			type: Sequelize.GEOMETRY
-		},
-		sid: {
-			type: Sequelize.INTEGER
+			primaryKey: true,
+			autoIncrement: true
 		},
 		osm_id: {
 			type: Sequelize.INTEGER
 		},
-		information: {
-			type: Sequelize.STRING
+		lid: {
+			type: Sequelize.INTEGER
+		},
+		sid: {
+			type: Sequelize.INTEGER
 		},
 		type_id: {
 			type: Sequelize.INTEGER
 		},
 		level_id: {
 			type: Sequelize.INTEGER
+		},
+		lgeom: {
+			type: Sequelize.GEOMETRY
+		},
+		status: {
+			type: Sequelize.INTEGER
+		},
+		user_entri: {
+			type: Sequelize.STRING
+		},
+		ip_entri: {
+			type: Sequelize.STRING
+		},
+		user_ver: {
+			type: Sequelize.STRING
+		},
+		ip_ver: {
+			type: Sequelize.STRING
+		},
+		information: {
+			type: Sequelize.STRING
+		},
+		region_id: {
+			type: Sequelize.INTEGER
+		},
+		length: {
+			type: Sequelize.DOUBLE
+		},
+		centroid: {
+			type: Sequelize.GEOMETRY
+		},
+		cent_lat: {
+			type: Sequelize.DOUBLE
+		},
+		cent_lon: {
+			type: Sequelize.DOUBLE
 		}
 	},
 	{

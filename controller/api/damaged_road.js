@@ -27,21 +27,25 @@ const damaged_road = {
 			})
 	},
 
-	// update damaged road
-	update: function(req, res) {
+	// create damaged road
+	create: function(req, res) {
 		const { body } = req
 		const { damage_type_id, damage_level_id, information } = body.value
 
 		body.segments.forEach(item => {
-			const { rid } = item
-			model.update(
-				{
-					type_id: damage_type_id,
-					level_id: damage_level_id,
-					information
-				},
-				{ where: { rid } }
-			)
+			console.log(item)
+
+			model.create({
+				type_id: damage_type_id,
+				level_id: damage_level_id,
+				information,
+				...item,
+				user_entri: "test",
+				ip_entri: "127.0.0.1",
+				user_ver: "",
+				ip_ver: "",
+				region_id: 0
+			})
 		})
 
 		res.send({ success: true })
