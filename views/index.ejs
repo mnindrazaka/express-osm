@@ -11,6 +11,7 @@
 </head>
 
 <body>
+  
   <label>
     Damage Type
     <select id="damage_type" onchange="filter_damage()">
@@ -40,16 +41,8 @@
     }).addTo(mymap);
     
     // passing data dari controller ke script view
-    window.geojson = <%- JSON.stringify(geojson) %>;
-
-    // merubah coordinate ke lat lng
-    function convert_coordinate() {
-      for (let i = 0; i < window.geojson.length; i++) {
-        for (let j = 0; j < window.geojson[i].coordinates.length; j++) {
-          window.geojson[i].coordinates[j] = L.GeoJSON.coordsToLatLng(window.geojson[i].coordinates[j])
-        }
-      }
-    }
+    window.data = <%- JSON.stringify(data) %>;
+    console.log(window.data)
 
     // membersihkan peta dari polyline
     function clear_map() {
@@ -69,10 +62,10 @@
       clear_map()
       geojson.forEach(function (item) {
         // menggambar peta
-        L.polyline(item.coordinates, { color: item.color, opacity: 0.6, weight: 5}).bindPopup(`
-          <h4>damage type : ${item.damage_type}</h4>
-          <h4>damage level : ${item.damage_level}</h4>
-          <p>${item.information}</p>
+        L.polyline(item.coordinates, { color: item.damage_type.color, opacity: item.damage_level.alpha, weight: 5}).bindPopup(`
+          <h4>damage type : ${item.damage_type.name}</h4>
+          <h4>damage level : ${item.damage_level.name}</h4>
+          <p></p>
         `).addTo(mymap);
       })
     }
@@ -81,25 +74,24 @@
     function filter_damage() {
       let type_id = document.getElementById("damage_type").value
       let level_id = document.getElementById("damage_level").value
-      let geojson = window.geojson
+      let geojson = window.data
       
       if (type_id != 0) {
         geojson = geojson.filter(function(item) {
-          return item.damage_type_id == type_id
+          return item.damage_type.type_id == type_id
         })
       }
 
       if (level_id != 0) {
         geojson = geojson.filter(function(item) {
-          return item.damage_level_id == level_id
+          return item.damage_level.level_id == level_id
         })
       }
 
       renderMap(geojson)
     }
 
-    convert_coordinate()
-    renderMap(window.geojson)
+    renderMap(window.data)
   </script>
 </body>
 

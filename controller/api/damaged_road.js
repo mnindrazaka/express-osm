@@ -1,14 +1,24 @@
+const Sequalize = require("sequelize")
+const Op = Sequalize.Op
 const model = require("../../model/damaged_road")
 
 const damaged_road = {
 	index: function(req, res) {
+		const { lat, lon } = req.params
 		model
 			.findAll({
-				limit: 100,
 				include: [
 					{ association: "damage_type" },
 					{ association: "damage_level" }
-				]
+				],
+				where: {
+					cent_lat: {
+						[Op.between]: [lat - 0.00091, parseFloat(lat) + 0.00091]
+					},
+					cent_lon: {
+						[Op.between]: [lon - 0.00091, parseFloat(lon) + 0.00091]
+					}
+				}
 			})
 			.then(results => {
 				const jsonResults = JSON.parse(JSON.stringify(results))
