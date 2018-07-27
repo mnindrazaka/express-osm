@@ -2,37 +2,36 @@ const Sequalize = require("sequelize")
 const Op = Sequalize.Op
 const model = require("../../model/road_segment")
 
-const road_segment = {
-	index: async function(req, res) {
-		const { lat, lon } = req.params
+async function index(req, res) {
+	const { lat, lon } = req.params
+	const results = await model.findAll({
+		where: {
+			cent_lat: {
+				[Op.between]: [lat - 0.00091, parseFloat(lat) + 0.00091]
+			},
+			cent_lon: {
+				[Op.between]: [lon - 0.00091, parseFloat(lon) + 0.00091]
+			}
+		}
+	})
 
-		model
-			.findAll({
-				where: {
-					cent_lat: {
-						[Op.between]: [lat - 0.00091, parseFloat(lat) + 0.00091]
-					},
-					cent_lon: {
-						[Op.between]: [lon - 0.00091, parseFloat(lon) + 0.00091]
-					}
-				}
-			})
-			.then(results => {
-				const jsonResults = JSON.parse(JSON.stringify(results))
-				const data = jsonResults.map(result => {
-					const coordinates = result.lgeom.coordinates.map(coordinate => ({
-						latitude: coordinate[1],
-						longitude: coordinate[0]
-					}))
-
-					return {
-						...result,
-						coordinates
-					}
-				})
-				res.send(data)
-			})
-	}
+	const jsonResults = convertToJson(results)
+	const data = jsonResults.map(result => {
+		const coordinates = switchLatLon(result.lgeom.coordinates)
+		return { ...result, coordinates }
+	})
+	res.send(data)
 }
 
-module.exports = road_segment
+function convertToJson(results) {
+	return JSON.parse(JSON.stringify(results))
+}
+
+function switchLatLon(coordinates) {
+	return coordinates.map(coordinate => ({
+		latitude: coordinate[1],
+		longitude: coordinate[0]
+	}))
+}
+
+module.exports = { index }
